@@ -27,8 +27,9 @@
     }
   </style>
   <body>
+    <div id="app"></div>
     <!-- 카운트가 올라감 -->
-    <h1>1번째 고양이 가라사대</h1>
+    <!-- <h1>1번째 고양이 가라사대</h1>
     <form>
       <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
       <button type="submit">생성</button>
@@ -60,9 +61,24 @@
           alt="고양이"
         />
       </li>
-    </ul>
-    <script>
+    </ul> -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">  
       console.log("야옹");
+
+      // 리액트는!
+      // 태그 만들고~
+      const catItem = (
+        <li>
+          <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />  
+        </li>
+      );
+      // append는?
+      const 여기다가그려 = document.querySelector("#app");
+      ReactDOM.render(catItem, 여기다가그려);
 
       // 만약에 요구사항을 JavaScript로 구현한다면....
       // const likeButton = document.querySelector(".main-card button");
@@ -70,7 +86,7 @@
       //   likeButton.innerHTML = "*";
       //   const favorites = document.querySelector(".favorites");
       //   const newFavoriteImage = document.createElement("img");
-      //   newFavoriteImage.src = "http:..~~";
+      //   newFavoriteImage.src = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
       //   const li = document.createElement("li");
       //   li.appendChild(newFavoriteImage);
       //   favorites.appendChild(li);
