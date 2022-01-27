@@ -1,71 +1,47 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>고양이 가라사대</title>
-  </head>
-  <style>
-    body {
-      text-align: center;
-    }
-    .main-card button {
-      position: relative;
-      left: -45px;
-      bottom: 15px;
-    }
-    .favorites {
-      list-style: none;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .favorites img {
-      width: 150px;
-    }
-  </style>
-  <body>
-    <div id="app"></div>
-    <!-- 카운트가 올라감 -->
-    <!-- <h1>1번째 고양이 가라사대</h1>
-    <form>
-      <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
-      <button type="submit">생성</button>
-    </form>
-    <div class="main-card">
-      <img
-        src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
-        alt="고양이"
-        width="400"
-      />
-      <button>🤍</button>
-    </div>
-    <ul class="favorites">
-      <li>
-        <img
-          src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
-          alt="고양이"
-        />
-      </li>
-      <li>
-        <img
-          src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
-          alt="고양이"
-        />
-      </li>
-      <li>
-        <img
-          src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
-          alt="고양이"
-        />
-      </li>
-    </ul> -->
-    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script type="text/babel">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>고양이 가라사대</title>
+</head>
+<style>
+  body {
+    text-align: center;
+  }
+
+  .main-card button {
+    position: relative;
+    left: -45px;
+    bottom: 15px;
+  }
+
+  .favorites {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .favorites img {
+    width: 150px;
+  }
+</style>
+
+<body>
+  <div id="app"></div>
+  <!-- 카운트가 올라감 -->
+  <!-- 
+    
+    
+     -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script type="text/babel">
     /**
      * 바벨?
      * 새시대의 자바스크립트를 위한 컴파일러(통역사)
@@ -77,6 +53,19 @@
      * */  
       console.log("야옹");
 
+      // 퀴즈 1! - header를 스스로 붙여보기
+      const _header = (
+        <h1>1번째 고양이 가라사대</h1>
+      );
+      
+      // 퀴즈 2 - 폼 태그 스스로 붙여보기
+      const _form = (
+        <form>
+          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+          <button type="submit">생성</button>
+        </form>
+      );
+
       // 리액트는!
       // 태그 만들고~
       const catItem = (
@@ -84,9 +73,44 @@
           <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />  
         </li>
       );
+      
+
+      // {} 안에 자바스크립트 문법을 사용할 수 있음.
+      // 자바스크립트 표현식을 쓸 수 있는데 표현식이란 자바스크립트 문법을 썼을 때 계산된 값이 나오는 것
+      const favorites = (
+        <ul class="favorites">
+          {catItem}
+          {catItem}
+          {catItem}
+        </ul>
+      );
+
+
+      // maincard
+      const mainCard = (
+        <div class="main-card">
+          <img
+            src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
+            alt="고양이"
+            width="400"
+          />
+          <button>🤍</button>
+        </div>
+      );
+
+      // app : 리액트에서 그리는 것은 최상위 태그가 하나여야 함.
+      const app = (
+        <div>
+          {_header}
+          {_form}
+          {mainCard}
+          {favorites}
+        </div>
+      );
+
       // append는?
       const 여기다가그려 = document.querySelector("#app");
-      ReactDOM.render(catItem, 여기다가그려);
+      ReactDOM.render(app, 여기다가그려);
 
       // 만약에 요구사항을 JavaScript로 구현한다면....
       // const likeButton = document.querySelector(".main-card button");
@@ -100,5 +124,6 @@
       //   favorites.appendChild(li);
       // });
     </script>
-  </body>
+</body>
+
 </html>
