@@ -33,11 +33,6 @@
 
 <body>
   <div id="app"></div>
-  <!-- 카운트가 올라감 -->
-  <!-- 
-    
-    
-     -->
   <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
@@ -54,18 +49,35 @@
       console.log("야옹");
 
       // 퀴즈 1! - header를 스스로 붙여보기
-      const _header = (
-        <h1>1번째 고양이 가라사대</h1>
-      );
+      // const _header = (
+      //   <h1>1번째 고양이 가라사대</h1>
+      // );
       
-      // 퀴즈 2 - 폼 태그 스스로 붙여보기
-      const _form = (
-        <form>
-          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
-          <button type="submit">생성</button>
-        </form>
-      );
+      const Title = (props) => {
+        console.log(props);
 
+        return (
+          <h1>{props.children}</h1>
+        )
+      }
+
+      // 퀴즈 2 - 폼 태그 스스로 붙여보기
+      // const _form = (
+      //   <form>
+      //     <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+      //     <button type="submit">생성</button>
+      //   </form>
+      // );
+      
+      // 2022.01.28 퀴즈 1: form element 컴포넌트로 변경
+      const Form = () => {
+        return (
+          <form>
+            <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+            <button type="submit">생성</button>
+        </form>
+        )
+      }
       // 리액트는!
       // 태그 만들고~
       const catItem = (
@@ -74,37 +86,89 @@
         </li>
       );
       
+      // 컴포넌트는 대문자로!!!!
+      // 첫번째 인자로 받는 부분에 object형태로 데이터를 받아옴
+      function CatItem(props) {
+        return (
+          <li>
+            <img src={props.img} />  
+          </li>
+        )
+      };
 
       // {} 안에 자바스크립트 문법을 사용할 수 있음.
       // 자바스크립트 표현식을 쓸 수 있는데 표현식이란 자바스크립트 문법을 썼을 때 계산된 값이 나오는 것
-      const favorites = (
-        <ul class="favorites">
-          {catItem}
-          {catItem}
-          {catItem}
-        </ul>
-      );
+      // 변수로 작성한 건 {}에 쓰고 컴포넌트는 <> 를 쓰나....?
 
+      // const favorites = (
+      //   <ul class="favorites">
+      //     <CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
+      //     <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
+      //     <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript"/>
+      //   </ul>
+      // );
+      
+      // 자꾸 까먹는다. 컴포넌트는 대문자로 시작한다. 
+      function Favorites() {
+        return (
+          <ul class="favorites">
+            <CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
+            <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
+            <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript"/>
+        </ul>
+        )
+      }
 
       // maincard
-      const mainCard = (
-        <div class="main-card">
+      // const mainCard = (
+      //   <div class="main-card">
+      //     <img
+      //       src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
+      //       alt="고양이"
+      //       width="400"
+      //     />
+      //     <button>🤍</button>
+      //   </div>
+      // );
+
+      // 화살표 함수 쓰는 방법, 제대로 익히자
+      // 2022.01.28 퀴즈 2 : MainCard 재사용을 위해 img태그를 props로 받아서 보여주기
+      // 바로 오브젝트로 풀어서 props 써보는 문법
+      // ES6+ 디스트럭처링 문법 적용 전
+      /**
+       * const MainCard = (props)=> (
+       * <img src={props.img} />
+       * 
+       * )
+       * 
+       * 문법 적용 후
+       * 
+       * const MainCard({img, alt, width}) => (
+       *  <img src="img">
+       * )
+       * 
+      */
+      const MainCard = ({img, alt, width}) => {
+        return (
+          <div class="main-card">
           <img
-            src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
-            alt="고양이"
-            width="400"
+            src = {img}
+            alt= {alt}
+            width= {width}
           />
           <button>🤍</button>
         </div>
-      );
-
+        )
+      }
       // app : 리액트에서 그리는 것은 최상위 태그가 하나여야 함.
+      // <> : 얘는 컴퍼넌트 태그 방식. 
+      // Title처럼 일반 태그처럼 쓰는 것도 props로 인식하여 넘겨준다
       const app = (
         <div>
-          {_header}
-          {_form}
-          {mainCard}
-          {favorites}
+          <Title>2번째 고양이 가라사대</Title>
+          <Form />
+          <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt ="고양이"  width="400" />
+          <Favorites />
         </div>
       );
 
