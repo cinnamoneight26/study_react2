@@ -67,9 +67,22 @@
       
       // 2022.01.28 퀴즈 1: form element 컴포넌트로 변경
       const Form = () => {
+        // 상태 만들기 : useState
+        // useState의 1이라는 인자는 초기값. 1부터 시작할 거니까..
+        // const counterState = React.useState(1);
+        // counterState는 두 개로 나뉨
+        // const counter = counterState[0];
+        // const setCounter = counterState[1];
+
+        // 위에처럼 쓰면 넘나 귀찮으니까 JavaScript문법으로 아래와 같이 변경해서 쓰도록 하자.
+        const [counter, setCounter] = React.useState(1);
+
+        console.log("카운터 : ", counter);
+
         function handleOnSubmit(e) {
           e.preventDefault();
-          console.log('submit')
+          console.log('submit');
+          setCounter(counter + 1);
         }
 
         return (
@@ -184,7 +197,7 @@
       // Title처럼 일반 태그처럼 쓰는 것도 props로 인식하여 넘겨준다
       const app = (
         <div>
-          <Title>2번째 고양이 가라사대</Title>
+          <Title>1번째 고양이 가라사대</Title>
           <Form />
           <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt ="고양이"  width="400" />
           <Favorites />
