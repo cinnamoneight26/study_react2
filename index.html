@@ -66,7 +66,7 @@
       // );
       
       // 2022.01.28 퀴즈 1: form element 컴포넌트로 변경
-      const Form = () => {
+      const Form = ({handleOnSubmit}) => {
         // 상태 만들기 : useState
         // useState의 1이라는 인자는 초기값. 1부터 시작할 거니까..
         // const counterState = React.useState(1);
@@ -75,16 +75,7 @@
         // const setCounter = counterState[1];
 
         // 위에처럼 쓰면 넘나 귀찮으니까 JavaScript문법으로 아래와 같이 변경해서 쓰도록 하자.
-        const [counter, setCounter] = React.useState(1);
-
-        console.log("카운터 : ", counter);
-
-        function handleOnSubmit(e) {
-          e.preventDefault();
-          console.log('submit');
-          setCounter(counter + 1);
-        }
-
+        
         return (
           <form onSubmit={handleOnSubmit}>
             <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
@@ -131,11 +122,17 @@
       
       // 자꾸 까먹는다. 컴포넌트는 대문자로 시작한다. 
       function Favorites() {
+        const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+        const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+        const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+
+        const cats = [CAT1, CAT2, CAT3];
+
         return (
           <ul className="favorites">
-            <CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
-            <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
-            <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript"/>
+            {cats.map((cat) => (
+              <CatItem img={cat} key={cat}/>
+            ))}
         </ul>
         )
       }
@@ -195,18 +192,51 @@
       // app : 리액트에서 그리는 것은 최상위 태그가 하나여야 함.
       // <> : 얘는 컴퍼넌트 태그 방식. 
       // Title처럼 일반 태그처럼 쓰는 것도 props로 인식하여 넘겨준다
-      const app = (
+      // const app = (
+      //   <div>
+      //     <Title>1번째 고양이 가라사대</Title>
+      //     <Form />
+      //     <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt ="고양이"  width="400" />
+      //     <Favorites />
+      //   </div>
+      // );
+
+      // 상태 끌어올리기 : Title이랑 Form에서 useState를 사용해야함.
+      const App = () => {
+        const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+        const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+        const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+
+        const [counter, setCounter] = React.useState(1);
+        const [mainCat, setMainCat] = React.useState(CAT1);
+
+        console.log("카운터 : ", counter);
+
+        function handleOnSubmit(e) {
+          e.preventDefault();
+          console.log('submit');
+          setCounter(counter + 1);
+          setMainCat(CAT2);
+        };
+
+
+        return (
         <div>
-          <Title>1번째 고양이 가라사대</Title>
-          <Form />
-          <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt ="고양이"  width="400" />
+          <Title>{counter}번째 고양이 가라사대</Title>
+          <Form handleOnSubmit={handleOnSubmit}/>
+          <MainCard 
+            img={mainCat} 
+            alt ="고양이"  
+            width="400" />
           <Favorites />
         </div>
-      );
-
+        )
+      };
+      
       // append는?
       const 여기다가그려 = document.querySelector("#app");
-      ReactDOM.render(app, 여기다가그려);
+      // ReactDOM.render(app, 여기다가그려);
+      ReactDOM.render(<App />, 여기다가그려);
 
       // 만약에 요구사항을 JavaScript로 구현한다면....
       // const likeButton = document.querySelector(".main-card button");
