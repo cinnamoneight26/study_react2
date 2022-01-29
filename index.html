@@ -66,7 +66,7 @@
       // );
       
       // 2022.01.28 퀴즈 1: form element 컴포넌트로 변경
-      const Form = () => {
+      const Form = ({updateMainCat}) => {
         // 상태 만들기 : useState
         // useState의 1이라는 인자는 초기값. 1부터 시작할 거니까..
         // const counterState = React.useState(1);
@@ -86,8 +86,6 @@
         function handleInputChange(e) {          
           const userValue = e.target.value;
 
-          console.log(includesHangul(userValue))
-
           if (includesHangul(userValue)) {
             setErrorMessage('한글은 입력하실 수 없습니다.')
           } else {
@@ -103,8 +101,11 @@
           // else로 작성헤도 되지만 맨 처음에 초기화를 먼저 해주고 검증하는 방법도 있음!!!!
           setErrorMessage('');
           if (value === '') {
-            setErrorMessage('빈 값으로 만들 수 없습니다.')
+            setErrorMessage('빈 값으로 만들 수 없습니다.');
+            return;
           }
+
+          updateMainCat();
         }
 
         return (
@@ -236,17 +237,12 @@
         const [mainCat, setMainCat] = React.useState(CAT1);
         const [favorites, setFavorite] = React.useState([CAT1, CAT2]);
 
-        console.log("카운터 : ", counter);
-
-        function handleOnSubmit(e) {
-          e.preventDefault();
-          console.log('submit');
-          setCounter(counter + 1);
+        function updateMainCat() {
           setMainCat(CAT2);
+          setCounter(counter + 1);
         };
 
-        function handleHeartClick() {
-          console.log('Click');
+        function onHeartClick() {
           setFavorite([...favorites, CAT3])
         }
 
@@ -254,11 +250,11 @@
         return (
         <div>
           <Title>{counter}번째 고양이 가라사대</Title>
-          <Form handleOnSubmit={handleOnSubmit}/>
+          <Form updateMainCat={updateMainCat}/>
           <MainCard 
             img={mainCat} 
             alt ="고양이"  
-            width="400" handleHeartClick={handleHeartClick}/>
+            width="400" onHeartClick={onHeartClick}/>
           <Favorites favorites={favorites}/>
         </div>
         )
