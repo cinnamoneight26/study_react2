@@ -66,7 +66,7 @@
       // );
       
       // 2022.01.28 퀴즈 1: form element 컴포넌트로 변경
-      const Form = ({handleOnSubmit}) => {
+      const Form = () => {
         // 상태 만들기 : useState
         // useState의 1이라는 인자는 초기값. 1부터 시작할 거니까..
         // const counterState = React.useState(1);
@@ -76,10 +76,48 @@
 
         // 위에처럼 쓰면 넘나 귀찮으니까 JavaScript문법으로 아래와 같이 변경해서 쓰도록 하자.
         
+        // 상태 추가
+        const [value, setValue] = React.useState('');
+        // 폼 검증. 한글 입력 막기
+        const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+        const [errorMessage, setErrorMessage] = React.useState(''); 
+
+        // 소문자를 대문자로 바꾸기
+        function handleInputChange(e) {          
+          const userValue = e.target.value;
+
+          console.log(includesHangul(userValue))
+
+          if (includesHangul(userValue)) {
+            setErrorMessage('한글은 입력하실 수 없습니다.')
+          } else {
+            setErrorMessage('');
+          }
+
+          setValue(userValue.toUpperCase())
+        }
+        
+        function handleOnSubmit(e) {
+          e.preventDefault();
+
+          // else로 작성헤도 되지만 맨 처음에 초기화를 먼저 해주고 검증하는 방법도 있음!!!!
+          setErrorMessage('');
+          if (value === '') {
+            setErrorMessage('빈 값으로 만들 수 없습니다.')
+          }
+        }
+
         return (
           <form onSubmit={handleOnSubmit}>
-            <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="영어 대사를 입력해주세요" 
+              onChange={handleInputChange}
+              value={value}
+              />
             <button type="submit">생성</button>
+            <p style={{color:'red'}}>{errorMessage}</p>
         </form>
         )
       }
