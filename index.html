@@ -121,16 +121,10 @@
       // );
       
       // 자꾸 까먹는다. 컴포넌트는 대문자로 시작한다. 
-      function Favorites() {
-        const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
-        const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
-        const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
-
-        const cats = [CAT1, CAT2, CAT3];
-
+      function Favorites({favorites}) {
         return (
           <ul className="favorites">
-            {cats.map((cat) => (
+            {favorites.map((cat) => (
               <CatItem img={cat} key={cat}/>
             ))}
         </ul>
@@ -168,14 +162,8 @@
        * 
        * 
       */
-      const MainCard = ({img, alt, width}) => {
-        function handleHeartClick() {
-          console.log('Click')
-        }
-        function handleHeartMouseOver(){
-          console.log('mouse over')
-        }
-
+      const MainCard = ({img, alt, width, handleHeartClick}) => {
+        
         return (
           <div className="main-card">
           <img
@@ -184,8 +172,7 @@
             width= {width}
           />
           <button 
-            onClick={handleHeartClick} 
-            onMouseOver={handleHeartMouseOver}>🤍</button>
+            onClick={handleHeartClick}>🤍</button>
         </div>
         )
       }
@@ -209,6 +196,7 @@
 
         const [counter, setCounter] = React.useState(1);
         const [mainCat, setMainCat] = React.useState(CAT1);
+        const [favorites, setFavorite] = React.useState([CAT1, CAT2]);
 
         console.log("카운터 : ", counter);
 
@@ -219,6 +207,11 @@
           setMainCat(CAT2);
         };
 
+        function handleHeartClick() {
+          console.log('Click');
+          setFavorite([...favorites, CAT3])
+        }
+
 
         return (
         <div>
@@ -227,8 +220,8 @@
           <MainCard 
             img={mainCat} 
             alt ="고양이"  
-            width="400" />
-          <Favorites />
+            width="400" handleHeartClick={handleHeartClick}/>
+          <Favorites favorites={favorites}/>
         </div>
         )
       };
