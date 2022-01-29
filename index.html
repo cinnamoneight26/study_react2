@@ -25,10 +25,6 @@
     flex-wrap: wrap;
     gap: 15px;
   }
-
-  .favorites img {
-    width: 150px;
-  }
 </style>
 
 <body>
@@ -88,10 +84,17 @@
       
       // 컴포넌트는 대문자로!!!!
       // 첫번째 인자로 받는 부분에 object형태로 데이터를 받아옴
+      // style 이라는 props를 이용하여 css를 사용할 수 있음. 인라인 스타일링
+      // 최근 트랜드는 이모션 라이브러리
+      // https://emotion.sh/docs/introduction
+      // https://tailwindcss.com/
       function CatItem(props) {
         return (
           <li>
-            <img src={props.img} />  
+            <img 
+              src={props.img} 
+              style={{width:'150px'}}
+              />  
           </li>
         )
       };
@@ -111,7 +114,7 @@
       // 자꾸 까먹는다. 컴포넌트는 대문자로 시작한다. 
       function Favorites() {
         return (
-          <ul class="favorites">
+          <ul className="favorites">
             <CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
             <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
             <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript"/>
@@ -147,10 +150,12 @@
        *  <img src="img">
        * )
        * 
+       * 
+       * 
       */
       const MainCard = ({img, alt, width}) => {
         return (
-          <div class="main-card">
+          <div className="main-card">
           <img
             src = {img}
             alt= {alt}
