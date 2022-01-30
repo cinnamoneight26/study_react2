@@ -16,6 +16,7 @@ const jsonLocalStorage = {
   },
 };
 
+// text를 인자로 넘겨서 대사를 받을 것임.
 const fetchCat = async (text) => {
   const OPEN_API_DOMAIN = "https://cataas.com";
   const response = await fetch(`${OPEN_API_DOMAIN}/cat/says/${text}?json=true`);

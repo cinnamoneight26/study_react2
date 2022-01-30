@@ -56,7 +56,16 @@
       // const _header = (
       //   <h1>1번째 고양이 가라사대</h1>
       // );
+
       
+// text를 인자로 넘겨서 대사를 받을 것임.
+const fetchCat = async (text) => {
+  const OPEN_API_DOMAIN = "https://cataas.com";
+  const response = await fetch(`${OPEN_API_DOMAIN}/cat/says/${text}?json=true`);
+  const responseJson = await response.json();
+  return `${OPEN_API_DOMAIN}/${responseJson.url}`;
+};
+
       const Title = (props) => {
         console.log(props);
 
@@ -113,7 +122,7 @@
             return;
           }
 
-          updateMainCat();
+          updateMainCat(value);
         }
 
         return (
@@ -245,8 +254,19 @@
         const [mainCat, setMainCat] = React.useState(CAT1);
         const [favorites, setFavorite] = React.useState(jsonLocalStorage.getItem("favorites") || []);
 
-        function updateMainCat() {
-          setMainCat(CAT2);
+        async function setInitalCat() {
+          const newCat = await fetchCat('First cat');
+          setMainCat(newCat);
+        };
+        
+        React.useEffect(()=> {
+          setInitalCat();
+        }, []);
+
+        async function updateMainCat(value) {
+          const newCat = await fetchCat(value);
+
+          setMainCat(newCat);
           const nextCounter = counter + 1;
           setCounter(nextCounter);
           jsonLocalStorage.setItem('counter', nextCounter);
