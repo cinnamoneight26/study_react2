@@ -44,6 +44,14 @@
      * */  
       console.log("야옹");
 
+      const jsonLocalStorage = {
+      setItem: (key, value) => {
+      localStorage.setItem(key, JSON.stringify(value));
+      },
+      getItem: (key) => {
+      return JSON.parse(localStorage.getItem(key));
+      },
+      };
       // 퀴즈 1! - header를 스스로 붙여보기
       // const _header = (
       //   <h1>1번째 고양이 가라사대</h1>
@@ -201,7 +209,7 @@
        * 
        * 
       */
-      const MainCard = ({img, alt, width, handleHeartClick}) => {
+      const MainCard = ({img, alt, width, onHeartClick}) => {
         
         return (
           <div className="main-card">
@@ -211,7 +219,7 @@
             width= {width}
           />
           <button 
-            onClick={handleHeartClick}>🤍</button>
+            onClick={onHeartClick}>🤍</button>
         </div>
         )
       }
@@ -233,20 +241,24 @@
         const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
         const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
-        const [counter, setCounter] = React.useState(Number(localStorage.getItem("counter")));
+        const [counter, setCounter] = React.useState( jsonLocalStorage.getItem("counter"));
         const [mainCat, setMainCat] = React.useState(CAT1);
-        const [favorites, setFavorite] = React.useState([CAT1, CAT2]);
+        const [favorites, setFavorite] = React.useState(jsonLocalStorage.getItem("favorites") || []);
 
         function updateMainCat() {
           setMainCat(CAT2);
           const nextCounter = counter + 1;
           setCounter(nextCounter);
-          localStorage.setItem('counter', nextCounter);
+          jsonLocalStorage.setItem('counter', nextCounter);
 
         };
 
         function onHeartClick() {
-          setFavorite([...favorites, CAT3])
+          const nextFavorites =[...favorites, mainCat];
+
+          setFavorite(nextFavorites);
+          jsonLocalStorage.setItem('favorites', nextFavorites);
+          console.log('click')
         }
 
 
