@@ -178,6 +178,11 @@ const fetchCat = async (text) => {
       
       // 자꾸 까먹는다. 컴포넌트는 대문자로 시작한다. 
       function Favorites({favorites}) {
+        // 조건부 렌더링
+        if(favorites.length === 0) {
+          return <div>사진 위 하트를 눌러 고양이 사진을 저장해봐요!</div>
+        }
+
         return (
           <ul className="favorites">
             {favorites.map((cat) => (
@@ -218,8 +223,9 @@ const fetchCat = async (text) => {
        * 
        * 
       */
-      const MainCard = ({img, alt, width, onHeartClick}) => {
-        
+      const MainCard = ({img, alt, width, onHeartClick, alreadyFavorite}) => {
+        const heartIcon = alreadyFavorite ? "💖" : "🤍";
+
         return (
           <div className="main-card">
           <img
@@ -228,7 +234,7 @@ const fetchCat = async (text) => {
             width= {width}
           />
           <button 
-            onClick={onHeartClick}>🤍</button>
+            onClick={onHeartClick}>{heartIcon}</button>
         </div>
         )
       }
@@ -250,15 +256,29 @@ const fetchCat = async (text) => {
         const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
         const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
-        const [counter, setCounter] = React.useState( jsonLocalStorage.getItem("counter"));
+        // React는 상태가 변경될 때마다 DOM이 다시 그려지는데 이 때 localstorage에 접근을 하는 것은 부하가 많이 걸림
+        // 그러므로 한번만 localstorage에 접근을 시도하게 하려면 useState에 함수를 넘겨주는 것으로 해결할 수 있음
+
+        const [counter, setCounter] = React.useState( () => {
+          return jsonLocalStorage.getItem("counter");
+        });
+
         const [mainCat, setMainCat] = React.useState(CAT1);
-        const [favorites, setFavorite] = React.useState(jsonLocalStorage.getItem("favorites") || []);
+        // const [favorites, setFavorite] = React.useState(jsonLocalStorage.getItem("favorites") || []);
+
+        // 성능 올리기
+        const [favorites, setFavorite] = React.useState(()=> {
+          return jsonLocalStorage.getItem("favorites") || [];
+        });
 
         async function setInitalCat() {
           const newCat = await fetchCat('First cat');
           setMainCat(newCat);
         };
         
+        // 
+        const alreadyFavorite = favorites.includes(mainCat);
+
         React.useEffect(()=> {
           setInitalCat();
         }, []);
@@ -267,10 +287,15 @@ const fetchCat = async (text) => {
           const newCat = await fetchCat(value);
 
           setMainCat(newCat);
-          const nextCounter = counter + 1;
-          setCounter(nextCounter);
-          jsonLocalStorage.setItem('counter', nextCounter);
+          
+          // 함수, 지연초기화
+          // https://ko.reactjs.org/docs/state-and-lifecycle.html#state-updates-may-be-asynchronous
 
+          setCounter((prev)=> {
+            const nextCounter = prev + 1;
+            jsonLocalStorage.setItem('counter', nextCounter);
+            return nextCounter;
+          });
         };
 
         function onHeartClick() {
@@ -281,15 +306,18 @@ const fetchCat = async (text) => {
           console.log('click')
         }
 
+        const counterTitle = counter === null ? "" : counter+ "번째 ";
 
         return (
         <div>
-          <Title>{counter}번째 고양이 가라사대</Title>
+          <Title>{counterTitle}고양이 가라사대</Title>
           <Form updateMainCat={updateMainCat}/>
           <MainCard 
             img={mainCat} 
             alt ="고양이"  
-            width="400" onHeartClick={onHeartClick}/>
+            width="400" onHeartClick={onHeartClick}
+            alreadyFavorite = {alreadyFavorite}
+            />
           <Favorites favorites={favorites}/>
         </div>
         )
