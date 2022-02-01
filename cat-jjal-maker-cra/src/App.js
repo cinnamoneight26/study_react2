@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Learn React 2
         </a>
       </header>
     </div>
@@ -23,3 +23,6 @@ function App() {
 }
 
 export default App;
+
+// import, export
+// 파일을 모듈처럼 가져오고 내보내는 문법
