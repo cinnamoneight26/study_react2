@@ -11,11 +11,22 @@ const jsonLocalStorage = {
   },
   };
   
+// 2022.05.29 기존 API 불안정으로 다른 API로 대체함
 const fetchCat = async (text) => {
-const OPEN_API_DOMAIN = "https://cataas.com";
-const response = await fetch(`${OPEN_API_DOMAIN}/cat/says/${text}?json=true`);
-const responseJson = await response.json();
-return `${OPEN_API_DOMAIN}/${responseJson.url}`;
+  // const OPEN_API_DOMAIN = "https://cataas.com";
+  // const response = await fetch(
+  //     `${OPEN_API_DOMAIN}/cat/says/${text}?json=true`
+  // );
+  // const responseJson = await response.json();
+  // return `${OPEN_API_DOMAIN}/${responseJson.url}`;
+
+  const response = await fetch(
+      `https://api.thecatapi.com/v1/images/search`
+  );
+
+  const responseJson = await response.json();
+
+  return responseJson[0].url;
 };
 
   
@@ -139,13 +150,25 @@ return `${OPEN_API_DOMAIN}/${responseJson.url}`;
       });
     };
 
+    // 하트 클릭 시 중복이 되고 localstorage에서 error 발생. 수정 필요
     function onHeartClick() {
-      const nextFavorites =[...favorites, mainCat];
+      try {
+          //  수정. 이미 하트가 찍혀있을 경우 return;
+          if (alreadyFavorite == true) {
+              return;
+          }
 
-      setFavorite(nextFavorites);
-      jsonLocalStorage.setItem('favorites', nextFavorites);
-      console.log('click')
-    }
+          const nextFavorites = [...favorites, mainCat];
+
+          console.log(nextFavorites);
+
+          setFavorite(nextFavorites);
+          jsonLocalStorage.setItem("favorites", nextFavorites);
+          console.log("click");
+      } catch (error) {
+          console.error("error : ", error);
+      }
+  }
 
     const counterTitle = counter === null ? "" : counter+ "번째 ";
 
