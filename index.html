@@ -1,343 +1,361 @@
 <!DOCTYPE html>
 <html lang="ko">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>고양이 가라사대</title>
-</head>
-<style>
-  body {
-    text-align: center;
-  }
-
-  .main-card button {
-    position: relative;
-    left: -45px;
-    bottom: 15px;
-  }
-
-  .favorites {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-</style>
-
-<body>
-  <div id="app"></div>
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  <script type="text/babel">
-    /**
-     * 바벨?
-     * 새시대의 자바스크립트를 위한 컴파일러(통역사)
-     * 
-     * 개발자도구에서 head 쪽에 스크립트가 추가된 것을 볼 수 있음
-     * 브라우저는 우리가 하단에 작성한 스크립트를 읽는 것이 아니라
-     * 상단에 새로 생성된 head쪽의 스크립트를 읽어서 처리
-     * 
-     * */  
-      const jsonLocalStorage = {
-      setItem: (key, value) => {
-      localStorage.setItem(key, JSON.stringify(value));
-      },
-      getItem: (key) => {
-      return JSON.parse(localStorage.getItem(key));
-      },
-      };
-      // 퀴즈 1! - header를 스스로 붙여보기
-      // const _header = (
-      //   <h1>1번째 고양이 가라사대</h1>
-      // );
-
-      
-// text를 인자로 넘겨서 대사를 받을 것임.
-const fetchCat = async (text) => {
-  const OPEN_API_DOMAIN = "https://cataas.com";
-  const response = await fetch(`${OPEN_API_DOMAIN}/cat/says/${text}?json=true`);
-  const responseJson = await response.json();
-  return `${OPEN_API_DOMAIN}/${responseJson.url}`;
-};
-
-      const Title = (props) => {
-        console.log(props);
-
-        return (
-          <h1>{props.children}</h1>
-        )
-      }
-
-      // 퀴즈 2 - 폼 태그 스스로 붙여보기
-      // const _form = (
-      //   <form>
-      //     <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
-      //     <button type="submit">생성</button>
-      //   </form>
-      // );
-      
-      // 2022.01.28 퀴즈 1: form element 컴포넌트로 변경
-      const Form = ({updateMainCat}) => {
-        // 상태 만들기 : useState
-        // useState의 1이라는 인자는 초기값. 1부터 시작할 거니까..
-        // const counterState = React.useState(1);
-        // counterState는 두 개로 나뉨
-        // const counter = counterState[0];
-        // const setCounter = counterState[1];
-
-        // 위에처럼 쓰면 넘나 귀찮으니까 JavaScript문법으로 아래와 같이 변경해서 쓰도록 하자.
-        
-        // 상태 추가
-        const [value, setValue] = React.useState('');
-        // 폼 검증. 한글 입력 막기
-        const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
-        const [errorMessage, setErrorMessage] = React.useState(''); 
-
-        // 소문자를 대문자로 바꾸기
-        function handleInputChange(e) {          
-          const userValue = e.target.value;
-
-          if (includesHangul(userValue)) {
-            setErrorMessage('한글은 입력하실 수 없습니다.')
-          } else {
-            setErrorMessage('');
-          }
-
-          setValue(userValue.toUpperCase())
-        }
-        
-        function handleOnSubmit(e) {
-          e.preventDefault();
-
-          // else로 작성헤도 되지만 맨 처음에 초기화를 먼저 해주고 검증하는 방법도 있음!!!!
-          setErrorMessage('');
-          if (value === '') {
-            setErrorMessage('빈 값으로 만들 수 없습니다.');
-            return;
-          }
-
-          updateMainCat(value);
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>고양이 가라사대</title>
+    </head>
+    <style>
+        body {
+            text-align: center;
         }
 
-        return (
-          <form onSubmit={handleOnSubmit}>
-            <input 
-              type="text" 
-              name="name" 
-              placeholder="영어 대사를 입력해주세요" 
-              onChange={handleInputChange}
-              value={value}
-              />
-            <button type="submit">생성</button>
-            <p style={{color:'red'}}>{errorMessage}</p>
-        </form>
-        )
-      }
-      // 리액트는!
-      // 태그 만들고~
-      const catItem = (
-        <li>
-          <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />  
-        </li>
-      );
-      
-      // 컴포넌트는 대문자로!!!!
-      // 첫번째 인자로 받는 부분에 object형태로 데이터를 받아옴
-      // style 이라는 props를 이용하여 css를 사용할 수 있음. 인라인 스타일링
-      // 최근 트랜드는 이모션 라이브러리
-      // https://emotion.sh/docs/introduction
-      // https://tailwindcss.com/
-      function CatItem(props) {
-        return (
-          <li>
-            <img 
-              src={props.img} 
-              style={{width:'150px'}}
-              />  
-          </li>
-        )
-      };
-
-      // {} 안에 자바스크립트 문법을 사용할 수 있음.
-      // 자바스크립트 표현식을 쓸 수 있는데 표현식이란 자바스크립트 문법을 썼을 때 계산된 값이 나오는 것
-      // 변수로 작성한 건 {}에 쓰고 컴포넌트는 <> 를 쓰나....?
-
-      // const favorites = (
-      //   <ul class="favorites">
-      //     <CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
-      //     <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
-      //     <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript"/>
-      //   </ul>
-      // );
-      
-      // 자꾸 까먹는다. 컴포넌트는 대문자로 시작한다. 
-      function Favorites({favorites}) {
-        // 조건부 렌더링
-        if(favorites.length === 0) {
-          return <div>사진 위 하트를 눌러 고양이 사진을 저장해봐요!</div>
+        .main-card button {
+            position: relative;
+            left: -45px;
+            bottom: 15px;
         }
 
-        return (
-          <ul className="favorites">
-            {favorites.map((cat) => (
-              <CatItem img={cat} key={cat}/>
-            ))}
-        </ul>
-        )
-      }
-
-      // maincard
-      // const mainCard = (
-      //   <div class="main-card">
-      //     <img
-      //       src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
-      //       alt="고양이"
-      //       width="400"
-      //     />
-      //     <button>🤍</button>
-      //   </div>
-      // );
-
-      // 화살표 함수 쓰는 방법, 제대로 익히자
-      // 2022.01.28 퀴즈 2 : MainCard 재사용을 위해 img태그를 props로 받아서 보여주기
-      // 바로 오브젝트로 풀어서 props 써보는 문법
-      // ES6+ 디스트럭처링 문법 적용 전
-      /**
-       * const MainCard = (props)=> (
-       * <img src={props.img} />
-       * 
-       * )
-       * 
-       * 문법 적용 후
-       * 
-       * const MainCard({img, alt, width}) => (
-       *  <img src="img">
-       * )
-       * 
-       * 
-       * 
-      */
-      const MainCard = ({img, alt, width, onHeartClick, alreadyFavorite}) => {
-        const heartIcon = alreadyFavorite ? "💖" : "🤍";
-
-        return (
-          <div className="main-card">
-          <img
-            src = {img}
-            alt= {alt}
-            width= {width}
-          />
-          <button 
-            onClick={onHeartClick}>{heartIcon}</button>
-        </div>
-        )
-      }
-      // app : 리액트에서 그리는 것은 최상위 태그가 하나여야 함.
-      // <> : 얘는 컴퍼넌트 태그 방식. 
-      // Title처럼 일반 태그처럼 쓰는 것도 props로 인식하여 넘겨준다
-      // const app = (
-      //   <div>
-      //     <Title>1번째 고양이 가라사대</Title>
-      //     <Form />
-      //     <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt ="고양이"  width="400" />
-      //     <Favorites />
-      //   </div>
-      // );
-
-      // 상태 끌어올리기 : Title이랑 Form에서 useState를 사용해야함.
-      const App = () => {
-        const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
-        const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
-        const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
-
-        // React는 상태가 변경될 때마다 DOM이 다시 그려지는데 이 때 localstorage에 접근을 하는 것은 부하가 많이 걸림
-        // 그러므로 한번만 localstorage에 접근을 시도하게 하려면 useState에 함수를 넘겨주는 것으로 해결할 수 있음
-
-        const [counter, setCounter] = React.useState( () => {
-          return jsonLocalStorage.getItem("counter");
-        });
-
-        const [mainCat, setMainCat] = React.useState(CAT1);
-        // const [favorites, setFavorite] = React.useState(jsonLocalStorage.getItem("favorites") || []);
-
-        // 성능 올리기
-        const [favorites, setFavorite] = React.useState(()=> {
-          return jsonLocalStorage.getItem("favorites") || [];
-        });
-
-        async function setInitalCat() {
-          const newCat = await fetchCat('First cat');
-          setMainCat(newCat);
-        };
-        
-        // 
-        const alreadyFavorite = favorites.includes(mainCat);
-
-        React.useEffect(()=> {
-          setInitalCat();
-        }, []);
-
-        async function updateMainCat(value) {
-          const newCat = await fetchCat(value);
-
-          setMainCat(newCat);
-          
-          // 함수, 지연초기화
-          // https://ko.reactjs.org/docs/state-and-lifecycle.html#state-updates-may-be-asynchronous
-
-          setCounter((prev)=> {
-            const nextCounter = prev + 1;
-            jsonLocalStorage.setItem('counter', nextCounter);
-            return nextCounter;
-          });
-        };
-
-        function onHeartClick() {
-          const nextFavorites =[...favorites, mainCat];
-
-          setFavorite(nextFavorites);
-          jsonLocalStorage.setItem('favorites', nextFavorites);
-          console.log('click')
+        .favorites {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
+    </style>
 
-        const counterTitle = counter === null ? "" : counter+ "번째 ";
+    <body>
+        <div id="app"></div>
+        <script
+            src="https://unpkg.com/react@17/umd/react.development.js"
+            crossorigin
+        ></script>
+        <script
+            src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+            crossorigin
+        ></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <script type="text/babel">
+            /**
+             * 바벨?
+             * 새시대의 자바스크립트를 위한 컴파일러(통역사)
+             *
+             * 개발자도구에서 head 쪽에 스크립트가 추가된 것을 볼 수 있음
+             * 브라우저는 우리가 하단에 작성한 스크립트를 읽는 것이 아니라
+             * 상단에 새로 생성된 head쪽의 스크립트를 읽어서 처리
+             *
+             * */
+            const jsonLocalStorage = {
+                setItem: (key, value) => {
+                    localStorage.setItem(key, JSON.stringify(value));
+                },
+                getItem: (key) => {
+                    return JSON.parse(localStorage.getItem(key));
+                },
+            };
+            // 퀴즈 1! - header를 스스로 붙여보기
+            // const _header = (
+            //   <h1>1번째 고양이 가라사대</h1>
+            // );
 
-        return (
-        <div>
-          <Title>{counterTitle}고양이 가라사대</Title>
-          <Form updateMainCat={updateMainCat}/>
-          <MainCard 
-            img={mainCat} 
-            alt ="고양이"  
-            width="400" onHeartClick={onHeartClick}
-            alreadyFavorite = {alreadyFavorite}
-            />
-          <Favorites favorites={favorites}/>
-        </div>
-        )
-      };
-      
-      // append는?
-      const 여기다가그려 = document.querySelector("#app");
-      // ReactDOM.render(app, 여기다가그려);
-      ReactDOM.render(<App />, 여기다가그려);
+            // text를 인자로 넘겨서 대사를 받을 것임.
+            // 2022.05.29 기존 API 불안정으로 다른 API로 대체함
+            const fetchCat = async (text) => {
+                // const OPEN_API_DOMAIN = "https://cataas.com";
+                // const response = await fetch(
+                //     `${OPEN_API_DOMAIN}/cat/says/${text}?json=true`
+                // );
+                // const responseJson = await response.json();
+                // return `${OPEN_API_DOMAIN}/${responseJson.url}`;
 
-      // 만약에 요구사항을 JavaScript로 구현한다면....
-      // const likeButton = document.querySelector(".main-card button");
-      // likeButton.addEventListener("click", function() {
-      //   likeButton.innerHTML = "*";
-      //   const favorites = document.querySelector(".favorites");
-      //   const newFavoriteImage = document.createElement("img");
-      //   newFavoriteImage.src = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
-      //   const li = document.createElement("li");
-      //   li.appendChild(newFavoriteImage);
-      //   favorites.appendChild(li);
-      // });
-    </script>
-</body>
+                const response = await fetch(
+                    `https://api.thecatapi.com/v1/images/search`
+                );
 
+                const responseJson = await response.json();
+
+                return responseJson[0].url;
+            };
+
+            const Title = (props) => {
+                console.log(props);
+
+                return <h1>{props.children}</h1>;
+            };
+
+            // 퀴즈 2 - 폼 태그 스스로 붙여보기
+            // const _form = (
+            //   <form>
+            //     <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+            //     <button type="submit">생성</button>
+            //   </form>
+            // );
+
+            // 2022.01.28 퀴즈 1: form element 컴포넌트로 변경
+            const Form = ({ updateMainCat }) => {
+                // 상태 만들기 : useState
+                // useState의 1이라는 인자는 초기값. 1부터 시작할 거니까..
+                // const counterState = React.useState(1);
+                // counterState는 두 개로 나뉨
+                // const counter = counterState[0];
+                // const setCounter = counterState[1];
+
+                // 위에처럼 쓰면 넘나 귀찮으니까 JavaScript문법으로 아래와 같이 변경해서 쓰도록 하자.
+
+                // 상태 추가
+                const [value, setValue] = React.useState("");
+                // 폼 검증. 한글 입력 막기
+                const includesHangul = (text) =>
+                    /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+                const [errorMessage, setErrorMessage] = React.useState("");
+
+                // 소문자를 대문자로 바꾸기
+                function handleInputChange(e) {
+                    const userValue = e.target.value;
+
+                    if (includesHangul(userValue)) {
+                        setErrorMessage("한글은 입력하실 수 없습니다.");
+                    } else {
+                        setErrorMessage("");
+                    }
+
+                    setValue(userValue.toUpperCase());
+                }
+
+                function handleOnSubmit(e) {
+                    e.preventDefault();
+
+                    // else로 작성헤도 되지만 맨 처음에 초기화를 먼저 해주고 검증하는 방법도 있음!!!!
+                    setErrorMessage("");
+                    if (value === "") {
+                        setErrorMessage("빈 값으로 만들 수 없습니다.");
+                        return;
+                    }
+
+                    updateMainCat(value);
+                }
+
+                return (
+                    <form onSubmit={handleOnSubmit}>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="영어 대사를 입력해주세요"
+                            onChange={handleInputChange}
+                            value={value}
+                        />
+                        <button type="submit">생성</button>
+                        <p style={{ color: "red" }}>{errorMessage}</p>
+                    </form>
+                );
+            };
+            // 리액트는!
+            // 태그 만들고~
+            const catItem = (
+                <li>
+                    <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+                </li>
+            );
+
+            // 컴포넌트는 대문자로!!!!
+            // 첫번째 인자로 받는 부분에 object형태로 데이터를 받아옴
+            // style 이라는 props를 이용하여 css를 사용할 수 있음. 인라인 스타일링
+            // 최근 트랜드는 이모션 라이브러리
+            // https://emotion.sh/docs/introduction
+            // https://tailwindcss.com/
+            function CatItem(props) {
+                return (
+                    <li>
+                        <img src={props.img} style={{ width: "150px" }} />
+                    </li>
+                );
+            }
+
+            // {} 안에 자바스크립트 문법을 사용할 수 있음.
+            // 자바스크립트 표현식을 쓸 수 있는데 표현식이란 자바스크립트 문법을 썼을 때 계산된 값이 나오는 것
+            // 변수로 작성한 건 {}에 쓰고 컴포넌트는 <> 를 쓰나....?
+
+            // const favorites = (
+            //   <ul class="favorites">
+            //     <CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
+            //     <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
+            //     <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript"/>
+            //   </ul>
+            // );
+
+            // 자꾸 까먹는다. 컴포넌트는 대문자로 시작한다.
+            function Favorites({ favorites }) {
+                // 조건부 렌더링
+                if (favorites.length === 0) {
+                    return (
+                        <div>사진 위 하트를 눌러 고양이 사진을 저장해봐요!</div>
+                    );
+                }
+
+                return (
+                    <ul className="favorites">
+                        {favorites.map((cat) => (
+                            <CatItem img={cat} key={cat} />
+                        ))}
+                    </ul>
+                );
+            }
+
+            // maincard
+            // const mainCard = (
+            //   <div class="main-card">
+            //     <img
+            //       src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
+            //       alt="고양이"
+            //       width="400"
+            //     />
+            //     <button>🤍</button>
+            //   </div>
+            // );
+
+            // 화살표 함수 쓰는 방법, 제대로 익히자
+            // 2022.01.28 퀴즈 2 : MainCard 재사용을 위해 img태그를 props로 받아서 보여주기
+            // 바로 오브젝트로 풀어서 props 써보는 문법
+            // ES6+ 디스트럭처링 문법 적용 전
+            /**
+             * const MainCard = (props)=> (
+             * <img src={props.img} />
+             *
+             * )
+             *
+             * 문법 적용 후
+             *
+             * const MainCard({img, alt, width}) => (
+             *  <img src="img">
+             * )
+             *
+             *
+             *
+             */
+            const MainCard = ({
+                img,
+                alt,
+                width,
+                onHeartClick,
+                alreadyFavorite,
+            }) => {
+                const heartIcon = alreadyFavorite ? "💖" : "🤍";
+
+                return (
+                    <div className="main-card">
+                        <img src={img} alt={alt} width={width} />
+                        <button onClick={onHeartClick}>{heartIcon}</button>
+                    </div>
+                );
+            };
+            // app : 리액트에서 그리는 것은 최상위 태그가 하나여야 함.
+            // <> : 얘는 컴퍼넌트 태그 방식.
+            // Title처럼 일반 태그처럼 쓰는 것도 props로 인식하여 넘겨준다
+            // const app = (
+            //   <div>
+            //     <Title>1번째 고양이 가라사대</Title>
+            //     <Form />
+            //     <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt ="고양이"  width="400" />
+            //     <Favorites />
+            //   </div>
+            // );
+
+            // 상태 끌어올리기 : Title이랑 Form에서 useState를 사용해야함.
+            const App = () => {
+                // 2022.05.29 API 불안정해서 바꿈
+                const CAT1 =
+                    "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+                // const CAT2 =
+                //     "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+                // const CAT3 =
+                //     "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+
+                // React는 상태가 변경될 때마다 DOM이 다시 그려지는데 이 때 localstorage에 접근을 하는 것은 부하가 많이 걸림
+                // 그러므로 한번만 localstorage에 접근을 시도하게 하려면 useState에 함수를 넘겨주는 것으로 해결할 수 있음
+
+                const [counter, setCounter] = React.useState(() => {
+                    return jsonLocalStorage.getItem("counter");
+                });
+
+                const [mainCat, setMainCat] = React.useState(CAT1);
+                // const [favorites, setFavorite] = React.useState(jsonLocalStorage.getItem("favorites") || []);
+
+                // 성능 올리기
+                const [favorites, setFavorite] = React.useState(() => {
+                    return jsonLocalStorage.getItem("favorites") || [];
+                });
+
+                async function setInitalCat() {
+                    const newCat = await fetchCat("First cat");
+                    setMainCat(newCat);
+                }
+
+                //
+                const alreadyFavorite = favorites.includes(mainCat);
+
+                React.useEffect(() => {
+                    setInitalCat();
+                }, []);
+
+                async function updateMainCat(value) {
+                    const newCat = await fetchCat(value);
+
+                    setMainCat(newCat);
+
+                    // 함수, 지연초기화
+                    // https://ko.reactjs.org/docs/state-and-lifecycle.html#state-updates-may-be-asynchronous
+
+                    setCounter((prev) => {
+                        const nextCounter = prev + 1;
+                        jsonLocalStorage.setItem("counter", nextCounter);
+                        return nextCounter;
+                    });
+                }
+
+                function onHeartClick() {
+                    const nextFavorites = [...favorites, mainCat];
+
+                    setFavorite(nextFavorites);
+                    jsonLocalStorage.setItem("favorites", nextFavorites);
+                    console.log("click");
+                }
+
+                const counterTitle = counter === null ? "" : counter + "번째 ";
+
+                return (
+                    <div>
+                        <Title>{counterTitle}고양이 가라사대</Title>
+                        <Form updateMainCat={updateMainCat} />
+                        <MainCard
+                            img={mainCat}
+                            alt="고양이"
+                            width="400"
+                            onHeartClick={onHeartClick}
+                            alreadyFavorite={alreadyFavorite}
+                        />
+                        <Favorites favorites={favorites} />
+                    </div>
+                );
+            };
+
+            // append는?
+            const 여기다가그려 = document.querySelector("#app");
+            // ReactDOM.render(app, 여기다가그려);
+            ReactDOM.render(<App />, 여기다가그려);
+
+            // 만약에 요구사항을 JavaScript로 구현한다면....
+            // const likeButton = document.querySelector(".main-card button");
+            // likeButton.addEventListener("click", function() {
+            //   likeButton.innerHTML = "*";
+            //   const favorites = document.querySelector(".favorites");
+            //   const newFavoriteImage = document.createElement("img");
+            //   newFavoriteImage.src = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+            //   const li = document.createElement("li");
+            //   li.appendChild(newFavoriteImage);
+            //   favorites.appendChild(li);
+            // });
+        </script>
+    </body>
 </html>
