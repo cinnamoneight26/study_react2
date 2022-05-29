@@ -24,3 +24,9 @@
         - https://joshua1988.github.io/webpack-guide/build/node-npm.html#node-js%EC%99%80-npm
         - NPM과 Node.js 소개 무료 강의 : https://www.inflearn.com/course/%ED%94%84%EB%9F%B0%ED%8A%B8%EC%97%94%EB%93%9C-%EC%9B%B9%ED%8C%A9/lecture/37370?inst=747606f7&tab=note&volume=1.00
         - ES6+ import 문법 : https://joshua1988.github.io/vue-camp/es6+/modules.html#%E1%84%86%E1%85%A9%E1%84%83%E1%85%B2%E1%86%AF%E1%84%92%E1%85%AA%E1%84%8B%E1%85%B4-%E1%84%91%E1%85%B5%E1%86%AF%E1%84%8B%E1%85%AD%E1%84%89%E1%85%A5%E1%86%BC
+
+---
+
+### 2022.05.29
+기존 API가 불안정하여 고양이 사진이 정상적으로 불러오지 않는 문제가 발생하여
+다른 API로 교체하였습니다.
