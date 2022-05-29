@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import React from 'react';
 import './App.css';
 import Title from './components/Title.js';
@@ -68,7 +67,7 @@ return `${OPEN_API_DOMAIN}/${responseJson.url}`;
   function CatItem(props) {
     return (
       <li>
-        <img src={props.img} style={{width:'150px'}} />  
+        <img src={props.img} alt="cat" style={{width:'150px'}} />  
       </li>
     )
   };
