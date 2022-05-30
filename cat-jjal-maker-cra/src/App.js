@@ -154,7 +154,7 @@ const fetchCat = async (text) => {
     function onHeartClick() {
       try {
           //  수정. 이미 하트가 찍혀있을 경우 return;
-          if (alreadyFavorite == true) {
+          if (alreadyFavorite === true) {
               return;
           }
 

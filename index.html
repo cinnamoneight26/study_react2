@@ -10,11 +10,22 @@
         body {
             text-align: center;
         }
-
+        .main-card {
+            position: relative;
+        }
         .main-card button {
             position: relative;
             left: -45px;
             bottom: 15px;
+        }
+        .main-card span {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            top: -80px;
+            font-size: 40px;
+            font-family: monospace;
+            text-shadow: 2px 2px 4px #fff;
         }
 
         .favorites {
@@ -63,20 +74,20 @@
             // text를 인자로 넘겨서 대사를 받을 것임.
             // 2022.05.29 기존 API 불안정으로 다른 API로 대체함
             const fetchCat = async (text) => {
-                // const OPEN_API_DOMAIN = "https://cataas.com";
-                // const response = await fetch(
-                //     `${OPEN_API_DOMAIN}/cat/says/${text}?json=true`
-                // );
-                // const responseJson = await response.json();
-                // return `${OPEN_API_DOMAIN}/${responseJson.url}`;
-
+                const OPEN_API_DOMAIN = "https://cataas.com";
                 const response = await fetch(
-                    `https://api.thecatapi.com/v1/images/search`
+                    `${OPEN_API_DOMAIN}/cat/says/${text}?json=true`
                 );
-
                 const responseJson = await response.json();
+                return `${OPEN_API_DOMAIN}/${responseJson.url}`;
 
-                return responseJson[0].url;
+                // const response = await fetch(
+                //     `https://api.thecatapi.com/v1/images/search`
+                // );
+
+                // const responseJson = await response.json();
+
+                // return responseJson[0].url;
             };
 
             const Title = (props) => {
@@ -240,6 +251,7 @@
                 width,
                 onHeartClick,
                 alreadyFavorite,
+                text,
             }) => {
                 const heartIcon = alreadyFavorite ? "💖" : "🤍";
 
@@ -304,7 +316,6 @@
                     const newCat = await fetchCat(value);
 
                     setMainCat(newCat);
-
                     // 함수, 지연초기화
                     // https://ko.reactjs.org/docs/state-and-lifecycle.html#state-updates-may-be-asynchronous
 
@@ -319,17 +330,13 @@
                 function onHeartClick() {
                     try {
                         //  수정. 이미 하트가 찍혀있을 경우 return;
-                        if (alreadyFavorite == true) {
+                        if (alreadyFavorite === true) {
                             return;
                         }
 
                         const nextFavorites = [...favorites, mainCat];
-
-                        console.log(nextFavorites);
-
                         setFavorite(nextFavorites);
                         jsonLocalStorage.setItem("favorites", nextFavorites);
-                        console.log("click");
                     } catch (error) {
                         console.error("error : ", error);
                     }
